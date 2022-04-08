@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App</title>
+    <link rel="stylesheet" href="https://bootswatch.com/4/lumen/bootstrap.min.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg  bg-primary">
+        <a class="navbar-brand   offset-md-5  text-light active" href="#">
+            MGP CIUDAD DE BATAN
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03"
+            aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarColor03">
+            <ul class="navbar-nav mr-auto"></ul>
+        </div>
+    </nav>
+    <br>
+    <div class="container mx-auto text-center">
+        <form action="http://localhost:5000/" method="get">
+            <select class="custom-select col-12 " name="opciones" id="opciones">
+
+                <option value="cpublica">Acta de constatacion - Via Publica</option>
+                <option value="constatacion">Acta de constatacion</option>
+                <option value="inspeccion">Acta de inspeccion</option>
+                <option value="clausura">Acta de clausura</option>
+
+            </select>
+
+            <input type="submit" onclick="redirect(event)" class="btn btn-success btn-lg btn-block mt-4" value="Entrar">
+        </form>
+    </div>
+
+    <script>
+        function redirect(e){
+            e.preventDefault();
+            const valueSelect = document.getElementById("opciones").value;
+            console.log("http://localhost:5000/" + valueSelect);
+            window.location.href = "http://localhost:5000/" + valueSelect;
+        }
+    </script>
+
+    <style>
+        .ultimo+div {
+            visibility: hidden;
+        }
+    </style>
+    <div class="ultimo"></div>
+</body>
+
+</html>
