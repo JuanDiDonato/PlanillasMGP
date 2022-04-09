@@ -1,10 +1,10 @@
 const PDFDocument = require('pdfkit'),fs = require("fs"), path = require("path"), date = new Date(),
 constatacionController = {};
 
-constatacionController.setConstatacionPDF = (req,res) => {
+constatacionController.setConstatacionPDF = async (req,res) => {
     const query = req.query, doc = new PDFDocument();
     let filename = 'Constatacion'+date.getMilliseconds()+'.pdf', text, text2, text3;
-    doc.pipe(fs.createWriteStream(filename));
+    doc.pipe(fs.createWriteStream(path.join(__dirname.split("controllers")[0],"pdfs",filename)))
 
     text = `
 Localidad:  ${query.c2}     Fecha:  ${query.c3}     Hora:  ${query.c4} 
@@ -77,7 +77,7 @@ Imprescindible presentarse con la siguiente documentacion:
     doc.image(path.join(__dirname.split("controllers")[0],"public","img","logo.png"),380,35, {
         fit: [200, 200],
     });
-    doc.fontSize(16).font(path.join(__dirname.split("controllers")[0],"public","fonts","Sun-ExtB.ttf")).text(`Acta de Constatacion N° ${query.c1}`,65,70)
+    doc.fontSize(16).text(`Acta de Constatacion N° ${query.c1}`,65,70)
     doc.font(path.join(__dirname.split("controllers")[0],"public","fonts","UnBatang_0613.ttf"));
     doc.fontSize(12).text(text,65, 150,{align:"justify"});
     doc.fontSize(10).text("Firma del Imputado y/o persona presente en este acto",65, 440);
@@ -89,7 +89,13 @@ Imprescindible presentarse con la siguiente documentacion:
     doc.end();
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename='+filename);
-    doc.pipe(res);
+    await doc.pipe(res);
+
+    // borra el archivo una vez creado
+    fs.unlink(path.join(__dirname.split("controllers")[0],"pdfs",filename), (err) => {
+        if(err) throw err
+        console.log(filename + " borrado con exito");
+    })
 }
 
 module.exports = constatacionController;

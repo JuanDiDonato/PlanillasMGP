@@ -1,10 +1,10 @@
 const PDFDocument = require('pdfkit'),fs = require("fs"), path = require("path"), date = new Date(),
 inspeccionController = {};
 
-inspeccionController.setInspeccionPDF = (req,res) => {
+inspeccionController.setInspeccionPDF = async (req,res) => {
     const query = req.query,  doc = new PDFDocument();
     let filename = 'Inspeccion'+date.getMilliseconds()+'.pdf', text;
-    doc.pipe(fs.createWriteStream(filename));
+    doc.pipe(fs.createWriteStream(path.join(__dirname.split("controllers")[0],"pdfs",filename)))
 
     text = `
 
@@ -37,7 +37,13 @@ Previa lectura de este acta, se invita a firmar y recibir copia a quien atiende 
     doc.end()
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename='+filename);
-    doc.pipe(res);
+    await doc.pipe(res)
+
+    // borra el archivo una vez creado
+    fs.unlink(path.join(__dirname.split("controllers")[0],"pdfs",filename), (err) => {
+        if(err) throw err
+        console.log(filename + " borrado con exito");
+    })
 } 
 
 module.exports = inspeccionController;

@@ -1,10 +1,10 @@
 const PDFDocument = require('pdfkit'),fs = require("fs"), path = require("path"), date = new Date(),
 cpublicaController = {};
 
-cpublicaController.setCpublicaPDF = (req,res) => {
+cpublicaController.setCpublicaPDF = async (req,res) => {
     const query = req.query,  doc = new PDFDocument();
     let filename = 'ConstatacionPublica'+date.getMilliseconds()+'.pdf', text, text2, text3, text4;
-    doc.pipe(fs.createWriteStream(filename));
+    doc.pipe(fs.createWriteStream(path.join(__dirname.split("controllers")[0],"pdfs",filename)))
 
     text = `
 Mar del Plata ${query.b2}/${query.b3}/${query.b4}
@@ -75,7 +75,13 @@ Imprescindible presentarse con la siguiente documentacion:
     doc.end()
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename='+filename);
-    doc.pipe(res);
+    await doc.pipe(res);
+
+    // borra el archivo una vez creado
+    fs.unlink(path.join(__dirname.split("controllers")[0],"pdfs",filename), (err) => {
+        if(err) throw err
+        console.log(filename + " borrado con exito");
+    })
 }
 
 module.exports=cpublicaController;
