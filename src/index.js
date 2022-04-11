@@ -3,7 +3,7 @@ const path = require("path");
 const app = express();
 
 // middlewares
-app.set("port", 5000);
+app.set("port", process.env.PORT || 3000);
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "public")));
